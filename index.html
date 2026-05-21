@@ -243,12 +243,7 @@ body{min-height:100vh;background:var(--navy);font-family:'Cinzel',serif;
   font-family:'Cinzel',serif;font-size:.82rem;cursor:pointer;transition:all .3s}
 .f-replay:hover{background:rgba(245,197,24,.1)}
 
-/* NO BUTTON */
-#noBtn{position:fixed;z-index:600;
-  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);
-  color:rgba(255,255,255,.28);border-radius:8px;padding:8px 18px;
-  font-family:'Cinzel',serif;font-size:.75rem;cursor:pointer;
-  transition:opacity .2s;letter-spacing:.06em}
+
 
 /* confetti */
 .cp{position:fixed;top:-15px;z-index:700;border-radius:2px;
@@ -317,8 +312,6 @@ body{min-height:100vh;background:var(--navy);font-family:'Cinzel',serif;
 
 </div>
 
-<!-- ── FLOATING NO ── -->
-<button id="noBtn">NO THANKS</button>
 
 <!-- ── PHONE OVERLAY ── -->
 <div class="ov" id="ovPhone">
@@ -789,7 +782,7 @@ function closeOv(id) { document.getElementById(id).classList.remove('open'); }
 ════════════════════════════════════════════ */
 function showWin() {
   stopAmbient();
-  ['#qpanel','.t-row','.ll-row','#boxes','#cmt','#fab','#noBtn'
+  ['#qpanel','.t-row','.ll-row','#boxes','#cmt','#fab'
   ].forEach(sel => {
     const el = document.querySelector(sel);
     if (el) el.style.display='none';
@@ -839,23 +832,8 @@ function spawnConfetti() {
   }, i*25);
 }
 
-/* ════════════════════════════════════════════
-   NO BUTTON — RUNS AWAY
-════════════════════════════════════════════ */
-function moveNo() {
-  const b = document.getElementById('noBtn');
-  const mxX = window.innerWidth-b.offsetWidth-20;
-  const mxY = window.innerHeight-b.offsetHeight-20;
-  b.style.left = Math.max(10, Math.floor(Math.random()*mxX))+'px';
-  b.style.top  = Math.max(10, Math.floor(Math.random()*mxY))+'px';
-}
-window.addEventListener('load', moveNo);
-window.addEventListener('resize', moveNo);
-const nb = document.getElementById('noBtn');
-nb.addEventListener('mouseover',   moveNo);
-nb.addEventListener('mouseenter',  moveNo);
-nb.addEventListener('touchstart', e=>{e.preventDefault();moveNo()});
-nb.addEventListener('click',      e=>{e.preventDefault();moveNo()});
+
+
 
 /* ════════════════════════════════════════════
    START GAME (on splash click)
