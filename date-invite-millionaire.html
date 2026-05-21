@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Who Wants to Go on a Date?</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@400;600;900&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --gold: #f5c518; --gold-l: #ffe97a; --gold-d: #b8890a;
+  --navy: #020818; --blue: #0a1a5e;
+  --white: #f0e8ff; --dim: #5566aa;
+  --ok: #22c55e; --bad: #ef4444;
+  --CIRC: 138.23;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:var(--navy);font-family:'Cinzel',serif;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;color:var(--white)}
+
+/* ── BG ── */
+.bg{position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 110% 55% at 50% 0%,#0c1d7a 0%,transparent 60%),
+    radial-gradient(ellipse 60% 40% at 50% 105%,#1a0045 0%,transparent 55%),
+    linear-gradient(180deg,#020818,#030d25,#020818)}
+.stars{position:fixed;inset:0;z-index:0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 8% 12%,rgba(255,220,80,.8) 0%,transparent 100%),
+    radial-gradient(1px 1px at 22% 45%,rgba(255,255,255,.6) 0%,transparent 100%),
+    radial-gradient(2px 2px at 55% 18%,rgba(255,220,80,.7) 0%,transparent 100%),
+    radial-gradient(1px 1px at 78% 62%,rgba(255,255,255,.5) 0%,transparent 100%),
+    radial-gradient(1px 1px at 40% 85%,rgba(255,255,255,.6) 0%,transparent 100%),
+    radial-gradient(2px 2px at 88% 28%,rgba(255,220,80,.65) 0%,transparent 100%),
+    radial-gradient(1px 1px at 32% 8%,rgba(255,255,255,.5) 0%,transparent 100%),
+    radial-gradient(1px 1px at 68% 92%,rgba(255,220,80,.55) 0%,transparent 100%),
+    radial-gradient(1px 1px at 92% 75%,rgba(255,255,255,.45) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 15% 72%,rgba(255,220,80,.6) 0%,transparent 100%);
+  animation:tw 7s ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:1}50%{opacity:.5}}
+.beam{position:fixed;top:-80px;left:50%;transform:translateX(-50%);
+  width:700px;height:700px;
+  background:radial-gradient(ellipse,rgba(245,197,24,.055) 0%,transparent 70%);
+  z-index:0;pointer-events:none;animation:beamPulse 4s ease-in-out infinite}
+@keyframes beamPulse{0%,100%{opacity:.7}50%{opacity:1}}
+
+/* ── SPLASH ── */
+#splash{position:fixed;inset:0;z-index:200;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;
+  background:linear-gradient(135deg,#010614,#050c24,#010614);
+  transition:opacity .9s ease,visibility .9s ease}
+#splash.gone{opacity:0;visibility:hidden}
+.sp-sub{font-size:clamp(.6rem,2vw,.8rem);color:var(--gold-d);letter-spacing:.3em;text-transform:uppercase}
+.sp-logo{font-family:'Cinzel Decorative',serif;
+  font-size:clamp(1.5rem,5.5vw,3rem);text-align:center;line-height:1.25;
+  background:linear-gradient(135deg,var(--gold-d),var(--gold),var(--gold-l),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 4px 24px rgba(245,197,24,.55));
+  animation:logoShine 2.5s ease-in-out infinite}
+@keyframes logoShine{0%,100%{filter:drop-shadow(0 4px 24px rgba(245,197,24,.4))}50%{filter:drop-shadow(0 4px 44px rgba(245,197,24,.9))}}
+.sp-tap{color:var(--gold);font-size:clamp(.72rem,2.2vw,.9rem);
+  letter-spacing:.35em;text-transform:uppercase;animation:blink 1.4s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.sp-stars{position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(2px 2px at 12% 18%,rgba(245,197,24,.85) 0%,transparent 100%),
+    radial-gradient(1px 1px at 35% 72%,rgba(255,255,255,.7) 0%,transparent 100%),
+    radial-gradient(2px 2px at 64% 14%,rgba(245,197,24,.75) 0%,transparent 100%),
+    radial-gradient(1px 1px at 82% 58%,rgba(255,255,255,.65) 0%,transparent 100%),
+    radial-gradient(1px 1px at 48% 88%,rgba(255,255,255,.6) 0%,transparent 100%),
+    radial-gradient(2px 2px at 91% 32%,rgba(245,197,24,.7) 0%,transparent 100%),
+    radial-gradient(1px 1px at 22% 50%,rgba(255,255,255,.55) 0%,transparent 100%),
+    radial-gradient(1px 1px at 74% 82%,rgba(245,197,24,.6) 0%,transparent 100%)}
+
+/* ── PRIZE LADDER ── */
+#ladder{position:fixed;right:14px;top:50%;transform:translateY(-50%);
+  z-index:20;display:flex;flex-direction:column-reverse;gap:2px}
+.rung{font-size:.57rem;color:var(--dim);text-align:right;
+  padding:2px 8px;border-radius:3px;transition:all .4s;white-space:nowrap}
+.rung.mile{color:var(--gold)}
+.rung.act{background:linear-gradient(90deg,transparent,var(--gold));
+  color:var(--navy);font-weight:900;padding:3px 10px;
+  box-shadow:0 0 14px rgba(245,197,24,.55)}
+.rung.done{color:var(--gold-l);opacity:.38;text-decoration:line-through}
+
+/* ── GAME STAGE ── */
+#game{position:relative;z-index:10;
+  width:min(640px,95vw);display:flex;flex-direction:column;
+  align-items:center;gap:11px;opacity:0;transition:opacity .7s}
+#game.on{opacity:1}
+
+/* logo */
+.g-logo{text-align:center;margin-bottom:2px}
+.g-eye{font-size:.62rem;letter-spacing:.3em;color:var(--gold-d);text-transform:uppercase}
+.g-title{font-family:'Cinzel Decorative',serif;
+  font-size:clamp(1rem,3.4vw,1.6rem);line-height:1.2;
+  background:linear-gradient(90deg,var(--gold-d),var(--gold),var(--gold-l),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 2px 12px rgba(245,197,24,.3))}
+.g-sub{font-size:.58rem;color:var(--dim);letter-spacing:.2em;margin-top:2px}
+
+/* timer */
+.t-row{display:flex;align-items:center;gap:10px}
+.t-wrap{position:relative;width:52px;height:52px}
+.t-svg{transform:rotate(-90deg)}
+.t-bg{fill:none;stroke:rgba(255,255,255,.1);stroke-width:4}
+.t-fill{fill:none;stroke:var(--gold);stroke-width:4;stroke-linecap:round;
+  stroke-dasharray:138.23;stroke-dashoffset:0;transition:stroke-dashoffset 1s linear,stroke .5s}
+#tNum{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;font-weight:900;color:var(--gold)}
+.t-lbl{font-size:.58rem;color:var(--dim);letter-spacing:.15em}
+
+/* question panel */
+#qpanel{width:100%;
+  background:linear-gradient(160deg,rgba(10,26,94,.72),rgba(2,8,24,.93));
+  border:1.5px solid rgba(245,197,24,.32);border-radius:14px;
+  padding:20px 24px;text-align:center;
+  box-shadow:0 0 50px rgba(245,197,24,.07),0 10px 50px rgba(0,0,30,.7),
+             inset 0 1px 0 rgba(255,255,255,.05);
+  position:relative;min-height:78px;display:flex;align-items:center;justify-content:center;
+  animation:panelPulse 4s ease-in-out infinite}
+@keyframes panelPulse{0%,100%{box-shadow:0 0 30px rgba(245,197,24,.06),0 10px 50px rgba(0,0,30,.7)}
+  50%{box-shadow:0 0 55px rgba(245,197,24,.14),0 10px 50px rgba(0,0,30,.7)}}
+#qpanel::before{content:'';position:absolute;top:-1px;left:18%;right:18%;height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+#qpanel::after{content:'';position:absolute;bottom:-1px;left:18%;right:18%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold-d),transparent)}
+#qtext{font-size:clamp(.92rem,2.7vw,1.13rem);line-height:1.55;color:var(--white);letter-spacing:.02em}
+
+/* lifelines */
+.ll-row{display:flex;gap:16px;justify-content:center}
+.ll{width:54px;height:54px;border-radius:50%;
+  border:1.5px solid rgba(245,197,24,.45);background:rgba(245,197,24,.08);
+  cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:1px;color:var(--gold);font-family:'Cinzel',serif;
+  font-size:.54rem;font-weight:600;letter-spacing:.06em;transition:all .3s}
+.ll .ico{font-size:1.3rem;line-height:1}
+.ll:hover:not(.used){background:rgba(245,197,24,.22);transform:scale(1.12);
+  box-shadow:0 0 22px rgba(245,197,24,.45)}
+.ll.used{opacity:.18;cursor:not-allowed;color:var(--dim);border-color:rgba(255,255,255,.1)}
+
+/* answer boxes — 2×2 grid */
+#boxes{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.box{background:linear-gradient(135deg,rgba(10,26,94,.88),rgba(2,8,24,.96));
+  border:1.5px solid rgba(80,120,255,.35);border-radius:12px;
+  padding:13px 15px;cursor:pointer;display:flex;align-items:center;gap:11px;
+  transition:all .22s;position:relative;overflow:hidden;text-align:left}
+.box::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(245,197,24,.08),transparent);
+  opacity:0;transition:opacity .22s}
+.box:hover:not(.lk)::after{opacity:1}
+.box:hover:not(.lk){border-color:rgba(245,197,24,.75);transform:translateY(-2px) scale(1.01);
+  box-shadow:0 6px 22px rgba(245,197,24,.2)}
+.badge{width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--gold-d),var(--gold));
+  color:var(--navy);font-weight:900;font-size:.88rem;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 10px rgba(0,0,0,.45)}
+.blabel{font-size:clamp(.73rem,2.1vw,.87rem);color:var(--white);line-height:1.4}
+.box.sel{border-color:var(--gold);background:linear-gradient(135deg,rgba(245,197,24,.14),rgba(2,8,24,.96));
+  box-shadow:0 0 28px rgba(245,197,24,.22)}
+.box.ok{border-color:var(--ok);background:rgba(34,197,94,.18);animation:fOk .6s ease}
+.box.bad{border-color:var(--bad);background:rgba(239,68,68,.18);animation:fBad .6s ease}
+.box.fade{opacity:.14;pointer-events:none}
+.box.lk{cursor:default}
+@keyframes fOk{0%,100%{box-shadow:none}50%{box-shadow:0 0 44px rgba(34,197,94,.7)}}
+@keyframes fBad{0%,100%{box-shadow:none}50%{box-shadow:0 0 44px rgba(239,68,68,.7)}}
+
+/* commentary */
+#cmt{font-size:.73rem;color:var(--gold-d);letter-spacing:.1em;
+  text-align:center;min-height:20px;font-style:italic;transition:all .3s}
+
+/* final answer btn */
+#fab{display:none;background:linear-gradient(135deg,var(--gold-d),var(--gold));
+  color:var(--navy);border:none;border-radius:10px;
+  padding:13px 34px;font-family:'Cinzel Decorative',serif;
+  font-size:clamp(.65rem,2.3vw,.88rem);font-weight:700;cursor:pointer;
+  letter-spacing:.08em;box-shadow:0 4px 20px rgba(245,197,24,.4);
+  transition:all .3s;animation:popIn .4s ease}
+#fab:hover{transform:scale(1.05);box-shadow:0 6px 32px rgba(245,197,24,.6)}
+#fab.show{display:block}
+@keyframes popIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* dramatic overlay */
+#drama{position:fixed;inset:0;z-index:400;pointer-events:none;
+  background:rgba(0,0,0,0);transition:background .35s}
+#drama.dim{background:rgba(0,0,0,.78);pointer-events:all}
+#dramaTxt{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-family:'Cinzel Decorative',serif;
+  font-size:clamp(1.1rem,4vw,2rem);
+  background:linear-gradient(90deg,var(--gold-d),var(--gold-l),var(--gold-d));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  z-index:410;opacity:0;text-align:center;transition:opacity .5s;white-space:nowrap;
+  filter:drop-shadow(0 4px 22px rgba(245,197,24,.65))}
+#dramaTxt.show{opacity:1}
+
+/* overlays */
+.ov{position:fixed;inset:0;z-index:300;background:rgba(0,0,12,.9);
+  display:none;align-items:center;justify-content:center}
+.ov.open{display:flex}
+.ov-box{background:linear-gradient(160deg,rgba(10,26,94,.98),rgba(2,8,24,.99));
+  border:1.5px solid var(--gold-d);border-radius:18px;
+  padding:28px 34px;max-width:360px;width:90vw;text-align:center}
+.ov-ttl{color:var(--gold);font-size:.95rem;letter-spacing:.15em;margin-bottom:14px}
+.ov-body{color:var(--white);font-size:.86rem;line-height:1.7}
+.ov-close{margin-top:16px;background:rgba(245,197,24,.1);
+  border:1px solid var(--gold-d);color:var(--gold);border-radius:8px;
+  padding:8px 24px;cursor:pointer;font-family:'Cinzel',serif;font-size:.78rem;transition:all .2s}
+.ov-close:hover{background:rgba(245,197,24,.22)}
+
+/* audience chart */
+.aud-chart{display:flex;align-items:flex-end;justify-content:center;gap:14px;
+  height:110px;margin:14px 0}
+.aud-col{display:flex;flex-direction:column;align-items:center;gap:5px}
+.aud-pct{color:var(--gold-l);font-size:.8rem;font-weight:700}
+.aud-bar{width:44px;border-radius:4px 4px 0 0;
+  background:linear-gradient(to top,var(--gold-d),var(--gold));
+  transform-origin:bottom;animation:barUp .75s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes barUp{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.aud-ltr{color:var(--dim);font-size:.7rem}
+.aud-note{color:var(--dim);font-size:.62rem;font-style:italic;margin-top:4px}
+
+/* final screen */
+#final{display:none;flex-direction:column;align-items:center;
+  text-align:center;gap:18px;animation:riseUp .8s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes riseUp{from{opacity:0;transform:scale(.85) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.f-emo{font-size:4.5rem;animation:wob 1.1s ease infinite}
+@keyframes wob{0%,100%{transform:rotate(-5deg) scale(1)}50%{transform:rotate(5deg) scale(1.12)}}
+.f-ttl{font-family:'Cinzel Decorative',serif;font-size:clamp(1.3rem,5vw,2.1rem);
+  background:linear-gradient(135deg,var(--gold-d),var(--gold),var(--gold-l));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.f-msg{color:var(--white);font-size:clamp(.86rem,2.4vw,1.03rem);line-height:1.75;max-width:480px}
+.f-prize{background:rgba(245,197,24,.1);border:1.5px solid var(--gold-d);
+  border-radius:12px;padding:13px 30px;color:var(--gold);
+  font-size:1.1rem;font-weight:700;letter-spacing:.06em}
+.f-yes{background:linear-gradient(135deg,var(--gold-d),var(--gold),var(--gold-l));
+  color:var(--navy);border:none;border-radius:10px;
+  padding:14px 42px;font-family:'Cinzel Decorative',serif;
+  font-size:.88rem;font-weight:700;cursor:pointer;letter-spacing:.06em;
+  box-shadow:0 4px 24px rgba(245,197,24,.45);transition:all .3s}
+.f-yes:hover{transform:scale(1.06);box-shadow:0 6px 32px rgba(245,197,24,.65)}
+.f-replay{background:transparent;border:1.5px solid var(--gold-d);
+  color:var(--gold);border-radius:10px;padding:11px 34px;
+  font-family:'Cinzel',serif;font-size:.82rem;cursor:pointer;transition:all .3s}
+.f-replay:hover{background:rgba(245,197,24,.1)}
+
+/* NO BUTTON */
+#noBtn{position:fixed;z-index:600;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);
+  color:rgba(255,255,255,.28);border-radius:8px;padding:8px 18px;
+  font-family:'Cinzel',serif;font-size:.75rem;cursor:pointer;
+  transition:opacity .2s;letter-spacing:.06em}
+
+/* confetti */
+.cp{position:fixed;top:-15px;z-index:700;border-radius:2px;
+  animation:cf linear forwards;pointer-events:none}
+@keyframes cf{to{top:112vh;transform:rotate(900deg) translateX(90px);opacity:0}}
+
+@media(max-width:480px){
+  #ladder{display:none}
+  .ll{width:48px;height:48px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="stars"></div>
+<div class="beam"></div>
+
+<!-- ── SPLASH ── -->
+<div id="splash">
+  <div class="sp-stars"></div>
+  <div class="sp-sub">✦ Special Edition ✦</div>
+  <div class="sp-logo">Who Wants to<br>Go on a Date?</div>
+  <div class="sp-tap">✦ TAP ANYWHERE TO BEGIN ✦</div>
+</div>
+
+<!-- ── PRIZE LADDER ── -->
+<div id="ladder"></div>
+
+<!-- ── DRAMATIC OVERLAY ── -->
+<div id="drama"></div>
+<div id="dramaTxt"></div>
+
+<!-- ── MAIN GAME ── -->
+<div id="game">
+
+  <div class="g-logo">
+    <div class="g-eye">Helen's Special Edition</div>
+    <div class="g-title">Who Wants to Go on a Date?</div>
+    <div class="g-sub">★ The Question That Could Change Everything ★</div>
+  </div>
+
+  <div class="t-row">
+    <div class="t-wrap">
+      <svg class="t-svg" viewBox="0 0 50 50" width="52" height="52">
+        <circle class="t-bg" cx="25" cy="25" r="22"/>
+        <circle class="t-fill" id="tFill" cx="25" cy="25" r="22"/>
+      </svg>
+      <div id="tNum">30</div>
+    </div>
+    <div class="t-lbl">seconds<br>remaining</div>
+  </div>
+
+  <div id="qpanel"><div id="qtext">Loading…</div></div>
+
+  <div class="ll-row">
+    <div class="ll" id="ll50" onclick="use50()"><span class="ico">½</span>50:50</div>
+    <div class="ll" id="llP"  onclick="usePhone()"><span class="ico">📞</span>PHONE</div>
+    <div class="ll" id="llA"  onclick="useAud()"><span class="ico">👥</span>AUDIENCE</div>
+  </div>
+
+  <div id="boxes"></div>
+  <div id="cmt"></div>
+  <button id="fab" onclick="confirmAnswer()">IS THAT YOUR FINAL ANSWER? 🎙️</button>
+  <div id="final"></div>
+
+</div>
+
+<!-- ── FLOATING NO ── -->
+<button id="noBtn">NO THANKS</button>
+
+<!-- ── PHONE OVERLAY ── -->
+<div class="ov" id="ovPhone">
+  <div class="ov-box">
+    <div class="ov-ttl">📞 PHONING YOUR FRIEND…</div>
+    <div class="ov-body" id="phBody"></div>
+    <button class="ov-close" onclick="closeOv('ovPhone')">HANG UP 📵</button>
+  </div>
+</div>
+
+<!-- ── AUDIENCE OVERLAY ── -->
+<div class="ov" id="ovAud">
+  <div class="ov-box">
+    <div class="ov-ttl">👥 THE AUDIENCE HAS VOTED</div>
+    <div class="aud-chart" id="audChart"></div>
+    <div class="aud-note" id="audNote"></div>
+    <button class="ov-close" onclick="closeOv('ovAud')">THANK THE AUDIENCE 🙏</button>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════
+   DATA
+════════════════════════════════════════════ */
+const PRIZES = [
+  '£100','£200','£300','£500','£1,000',
+  '£2,000','£5,000','£10,000','£50,000','£1,000,000'
+];
+const MILES = [4, 9];
+
+const QS = [
+  {
+    q: "What is the scientifically correct response when someone amazing asks you on a date?",
+    opts: [
+      "Let me check my schedule 📅",
+      "I'm busy washing my hair 🧖‍♀️",
+      "YES, obviously! 💫",
+      "Have my people call your people 📋"
+    ],
+    c: 2,
+    cmt: [
+      "Checking a schedule… for a date? Bold move. Bold, wrong move. ❌",
+      "Your hair looks fine. It's always looked fine. That's not a valid excuse. ❌",
+      "CORRECT! The studio audience goes wild! 🎉",
+      "How many assistants do you actually have? ❌"
+    ],
+    phone: "Oh my GOD — it's obviously C! YES! Why are you even calling me?! JUST SAY YES! 😤📞"
+  },
+  {
+    q: "According to every romcom ever made, a date invitation MUST be answered with:",
+    opts: [
+      "Perhaps… let me sleep on it 😴",
+      "I'll have my assistant check my diary 🗂️",
+      "Send me a formal proposal 📝",
+      "YES without a second thought! 🎬"
+    ],
+    c: 3,
+    cmt: [
+      "Nobody in the history of cinema has 'slept on it' and ended up happy. ❌",
+      "Zero assistants were harmed in the making of this wrong answer. ❌",
+      "Legally binding date proposals are not a romcom trope. Yet. ❌",
+      "Every director, screenwriter and cinematographer agrees. CORRECT! 🎬"
+    ],
+    phone: "D! D!! The answer is D! YES without a second thought! Have you NEVER seen a romcom?! Call me back when you're engaged. BYE. 😂"
+  },
+  {
+    q: "Helen, will you go on a date with me? 💖",
+    opts: [
+      "Yes, I'd love to! 💕",
+      "Obviously yes, come on 😍",
+      "Did you even have to ask? YES! 🥺",
+      "A thousand times YES! 🎉"
+    ],
+    c: -1, // all correct
+    cmt: [
+      "Wonderful. Classy. Immaculate. 💕",
+      "The confidence is everything. 😍",
+      "Right?! I mean… right! 🥺",
+      "A thousand times?! The producers are crying. 🎉"
+    ],
+    phone: "SHE'S ASKING WHETHER TO SAY YES TO A DATE?! PICK ANY OF THEM — THEY'RE ALL YES!! I'M ON THE FLOOR!! 😭💕"
+  }
+];
+
+/* ════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════ */
+let qi = 0, sel = null, locked = false;
+let tsec = 30, tiv = null;
+let llDone = {f: false, p: false, a: false};
+let AC = null, ambNodes = [], beatIv = null;
+const CIRC = 138.23;
+
+/* ════════════════════════════════════════════
+   TRACKING — collects device info + IP
+════════════════════════════════════════════ */
+function device() {
+  const ua = navigator.userAgent;
+  let d = '🖥️ Desktop';
+  if (/iPhone/.test(ua))       d = '📱 iPhone';
+  else if (/iPad/.test(ua))    d = '📱 iPad';
+  else if (/Android/.test(ua)) d = /Mobile/.test(ua) ? '📱 Android Phone' : '📱 Android Tablet';
+  let b = 'Unknown';
+  if (/CriOS|Chrome/.test(ua)) b = 'Chrome';
+  else if (/FxiOS|Firefox/.test(ua)) b = 'Firefox';
+  else if (/Safari/.test(ua))  b = 'Safari';
+  else if (/Edg/.test(ua))     b = 'Edge';
+  return `${d} · ${b}`;
+}
+
+async function track(evt, extra = {}) {
+  let ip = 'unavailable';
+  try {
+    const r = await fetch('https://api.ipify.org?format=json');
+    ip = (await r.json()).ip;
+  } catch(e) {}
+  try {
+    await fetch('https://formspree.io/f/xbdqnlpb', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','Accept':'application/json'},
+      body: JSON.stringify({
+        _subject: `[Date Invite] ${evt}`,
+        event: evt,
+        device: device(),
+        screen: `${screen.width}×${screen.height}`,
+        language: navigator.language,
+        ip_address: ip,
+        referrer: document.referrer || 'direct / forwarded link',
+        opened_at: new Date().toLocaleString('en-GB'),
+        ...extra
+      })
+    });
+  } catch(e) {}
+}
+
+// Fire immediately on load — captures every phone that opens the link
+track('🔗 LINK OPENED — new visitor');
+
+/* ════════════════════════════════════════════
+   AUDIO (Web Audio API — WWTBAM inspired)
+════════════════════════════════════════════ */
+function ac() {
+  if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+  if (AC.state === 'suspended') AC.resume();
+  return AC;
+}
+
+function nt(f, t, d, v=.25, tp='sine') {
+  const c = ac(), osc = c.createOscillator(), g = c.createGain(), now = c.currentTime;
+  osc.type = tp; osc.frequency.value = f;
+  g.gain.setValueAtTime(0, now+t);
+  g.gain.linearRampToValueAtTime(v, now+t+.02);
+  g.gain.exponentialRampToValueAtTime(.001, now+t+d);
+  osc.connect(g); g.connect(c.destination);
+  osc.start(now+t); osc.stop(now+t+d+.05);
+}
+
+function playIntro() {
+  // Bass sequence
+  [[87.3,0,.22,.6],[87.3,.27,.12,.5],[87.3,.44,.1,.42],
+   [116.5,.63,.2,.55],[130.8,.92,.25,.65],
+   [174.6,1.28,.42,.72],[220,1.82,.5,.65],[261.6,2.5,1.1,.72]
+  ].forEach(([f,t,d,v]) => nt(f,t,d,v,'sine'));
+
+  // Synth pad chords
+  [[[174.6,220,261.6],0,.55],[[174.6,220,293.7],.63,.5],
+   [[196,246.9,329.6],1.28,.5],[[174.6,261.6,349.2],2.5,1.3]
+  ].forEach(([fs,t,d]) => fs.forEach(f => nt(f,t,d,.09,'triangle')));
+
+  // Rising arpeggio flourish
+  [261.6,329.6,392,523.3,659.3,784,1046.5,1318.5
+  ].forEach((f,i) => nt(f, 2.85+i*.11, .2, .13, 'sine'));
+}
+
+function startAmbient() {
+  stopAmbient();
+  const c = ac();
+  const bass = c.createOscillator(), lfo = c.createOscillator();
+  const lfoG = c.createGain(), bG = c.createGain(), flt = c.createBiquadFilter();
+  bass.type = 'sine'; bass.frequency.value = 87.3;
+  lfo.type = 'sine'; lfo.frequency.value = .9;
+  lfoG.gain.value = 12; bG.gain.value = .07;
+  flt.type = 'lowpass'; flt.frequency.value = 220;
+  lfo.connect(lfoG); lfoG.connect(bass.frequency);
+  bass.connect(flt); flt.connect(bG); bG.connect(c.destination);
+  bass.start(); lfo.start();
+  ambNodes = [bass, lfo];
+
+  let beat = 0;
+  beatIv = setInterval(() => {
+    const v = .04 + (beat%4===0?.025:0);
+    nt(174.6, 0, .05, v, 'triangle');
+    beat++;
+  }, 480);
+}
+
+function stopAmbient() {
+  ambNodes.forEach(n => { try{n.stop()}catch(e){} });
+  ambNodes = [];
+  if (beatIv) { clearInterval(beatIv); beatIv = null; }
+}
+
+function playTick()   { nt(880, 0, .04, .04, 'square'); }
+function playStab()   {
+  [[196,0],[261.6,.1],[329.6,.2],[196,.35],[130.8,.55],[87.3,.8]
+  ].forEach(([f,t]) => nt(f,t,.28,.38,'sawtooth'));
+}
+function playCorrect() {
+  [523.3,659.3,784,1046.5,1318.5].forEach((f,i) => nt(f,i*.1,.3,.22,'triangle'));
+}
+function playWrong()   {
+  [440,370,311,261.6].forEach((f,i) => nt(f,i*.16,.3,.16,'sawtooth'));
+}
+function playDrum()    {
+  for(let i=0;i<10;i++) setTimeout(()=>nt(100+Math.random()*20,0,.07,.1,'sawtooth'),i*80);
+}
+function playWin()     {
+  stopAmbient();
+  [523.3,659.3,784,880,1046.5,880,784,1046.5,1318.5,1568,2093
+  ].forEach((f,i) => nt(f,i*.12,.32,.22,'triangle'));
+  [130.8,196,261.6,196,261.6].forEach((f,i) => nt(f,i*.24,.4,.28,'sine'));
+}
+
+/* ════════════════════════════════════════════
+   PRIZE LADDER
+════════════════════════════════════════════ */
+function buildLadder() {
+  const el = document.getElementById('ladder');
+  el.innerHTML = '';
+  PRIZES.forEach((p,i) => {
+    const d = document.createElement('div');
+    d.className = 'rung'+(MILES.includes(i)?' mile':'');
+    d.id = 'r'+i;
+    d.textContent = `${i+1}. ${p}`;
+    el.appendChild(d);
+  });
+  refreshLadder();
+}
+function refreshLadder() {
+  const step = Math.floor(qi * PRIZES.length / QS.length);
+  PRIZES.forEach((_,i) => {
+    const el = document.getElementById('r'+i);
+    if (!el) return;
+    el.className = 'rung'+(MILES.includes(i)?' mile':'');
+    if (i < step) el.classList.add('done');
+    else if (i === step) el.classList.add('act');
+  });
+}
+
+/* ════════════════════════════════════════════
+   TIMER
+════════════════════════════════════════════ */
+function startTimer() {
+  clearInterval(tiv); tsec = 30;
+  document.getElementById('tFill').style.stroke = 'var(--gold)';
+  updTimer();
+  tiv = setInterval(() => {
+    tsec--;
+    updTimer();
+    playTick();
+    if (tsec <= 10) document.getElementById('tFill').style.stroke='#f97316';
+    if (tsec <= 5)  document.getElementById('tFill').style.stroke='var(--bad)';
+    if (tsec <= 10 && tsec > 5) setCmt("⏰ The clock is ticking…");
+    if (tsec <= 5 && tsec > 0)  setCmt("⚠️ Don't overthink this!!!");
+    if (tsec <= 0) { clearInterval(tiv); timeUp(); }
+  }, 1000);
+}
+function stopTimer() { clearInterval(tiv); }
+function updTimer() {
+  document.getElementById('tNum').textContent = tsec;
+  document.getElementById('tFill').style.strokeDashoffset = CIRC * (1 - tsec/30);
+}
+function timeUp() {
+  locked = true; lockBoxes();
+  const q = QS[qi];
+  setCmt("⏰ Time's up! The answer was still YES, by the way.");
+  if (q.c >= 0) {
+    setTimeout(() => {
+      boxes()[q.c].classList.add('ok');
+      setTimeout(() => nextQ(), 1800);
+    }, 600);
+  } else {
+    setTimeout(() => nextQ(), 1600);
+  }
+}
+
+/* ════════════════════════════════════════════
+   RENDER QUESTION
+════════════════════════════════════════════ */
+function boxes() { return document.querySelectorAll('.box'); }
+function setCmt(m) { document.getElementById('cmt').textContent = m; }
+function lockBoxes() { boxes().forEach(b => b.classList.add('lk')); }
+
+function renderQ() {
+  locked = false; sel = null;
+  const q = QS[qi];
+  document.getElementById('qtext').textContent = q.q;
+  document.getElementById('tFill').style.stroke = 'var(--gold)';
+  document.getElementById('fab').classList.remove('show');
+  setCmt('');
+
+  const grid = document.getElementById('boxes');
+  grid.innerHTML = '';
+  ['A','B','C','D'].forEach((L,i) => {
+    const b = document.createElement('div');
+    b.className = 'box';
+    b.dataset.i = i;
+    b.innerHTML = `<div class="badge">${L}</div><div class="blabel">${q.opts[i]}</div>`;
+    b.addEventListener('click', () => pick(i));
+    grid.appendChild(b);
+  });
+
+  refreshLadder();
+  playDrum();
+  setTimeout(startTimer, 800);
+}
+
+function pick(i) {
+  if (locked) return;
+  if (sel !== null) boxes()[sel].classList.remove('sel');
+  sel = i;
+  boxes()[i].classList.add('sel');
+  playTick();
+  setCmt(`🎙️ "${QS[qi].cmt[i]}"`);
+  document.getElementById('fab').classList.add('show');
+}
+
+function confirmAnswer() {
+  if (sel === null || locked) return;
+  locked = true; stopTimer();
+  playStab();
+
+  const D = document.getElementById('drama');
+  const T = document.getElementById('dramaTxt');
+  D.classList.add('dim');
+  T.textContent = '…is that your FINAL answer?';
+  T.classList.add('show');
+
+  setTimeout(() => {
+    T.textContent = '⏳  …';
+    setTimeout(() => {
+      T.textContent = '…';
+      setTimeout(() => {
+        D.classList.remove('dim');
+        T.classList.remove('show');
+        reveal();
+      }, 900);
+    }, 1000);
+  }, 1800);
+}
+
+function reveal() {
+  const q = QS[qi];
+  lockBoxes();
+
+  if (q.c === -1) {
+    // Final question — all answers are YES!
+    boxes()[sel].classList.add('ok');
+    playWin(); spawnConfetti();
+    track('💖 SAID YES — WINNER!', {picked: q.opts[sel]});
+    setTimeout(showWin, 1400);
+  } else if (sel === q.c) {
+    boxes()[sel].classList.add('ok');
+    playCorrect();
+    setCmt('✅ CORRECT! The audience erupts! Walk-on music intensifies…');
+    track(`✅ Q${qi+1} answered correctly`);
+    setTimeout(nextQ, 1900);
+  } else {
+    boxes()[sel].classList.add('bad');
+    boxes()[q.c].classList.add('ok');
+    playWrong();
+    setCmt('❌ Oh dear. BUT — because this is a special show, you get ONE more try. Don\'t waste it. 💝');
+    track(`❌ Q${qi+1} wrong`, {picked: q.opts[sel], correct: q.opts[q.c]});
+    setTimeout(retry, 2800);
+  }
+}
+
+function nextQ() {
+  qi++;
+  if (qi >= QS.length) { showWin(); return; }
+  renderQ();
+}
+
+function retry() {
+  boxes().forEach(b => b.classList.remove('ok','bad','sel','lk','fade'));
+  locked = false; sel = null;
+  document.getElementById('fab').classList.remove('show');
+  document.getElementById('tFill').style.stroke = 'var(--gold)';
+  setCmt('🔄 The producers have allowed a retry. Remarkable scenes here in the studio.');
+  setTimeout(startTimer, 600);
+}
+
+/* ════════════════════════════════════════════
+   LIFELINES
+════════════════════════════════════════════ */
+function use50() {
+  if (llDone.f || locked) return;
+  llDone.f = true;
+  document.getElementById('ll50').classList.add('used');
+  playTick();
+  const q = QS[qi];
+  if (q.c === -1) {
+    // Removes 2 options — both remaining are still YES 😂
+    [1,3].forEach(i => boxes()[i].classList.add('fade'));
+    setCmt('✂️ 50:50 used! Two removed. The remaining two are… both still YES. You\'re welcome.');
+    return;
+  }
+  const wrong = [0,1,2,3].filter(i=>i!==q.c);
+  wrong.sort(()=>Math.random()-.5).slice(0,2).forEach(i => boxes()[i].classList.add('fade'));
+  setCmt('✂️ Two wrong answers gone! (You didn\'t need that help, honestly.)');
+}
+
+function usePhone() {
+  if (llDone.p || locked) return;
+  llDone.p = true;
+  document.getElementById('llP').classList.add('used');
+  playTick();
+  document.getElementById('phBody').innerHTML =
+    `<em>*ring ring… ring ring…*</em><br><br>"Hello?"<br><br>`+
+    `"IT'S ABOUT THE DATE QUESTION — WHAT DO YOU THINK?!"<br><br>`+
+    `"…${QS[qi].phone}"<br><br><em>*click*</em>`;
+  document.getElementById('ovPhone').classList.add('open');
+}
+
+function useAud() {
+  if (llDone.a || locked) return;
+  llDone.a = true;
+  document.getElementById('llA').classList.add('used');
+  playTick();
+
+  const q = QS[qi];
+  let pcts;
+  if (q.c === -1) {
+    pcts = [25,25,25,25];
+    document.getElementById('audNote').textContent =
+      '100% voted YES in some form. The 0% was the NO button. It ran away.';
+  } else {
+    pcts = [0,0,0,0];
+    pcts[q.c] = 62 + Math.floor(Math.random()*15);
+    let rem = 100 - pcts[q.c];
+    [0,1,2,3].filter(i=>i!==q.c).forEach((o,j,arr) => {
+      pcts[o] = j<arr.length-1 ? Math.floor(Math.random()*rem*.55) : rem;
+      rem -= pcts[o];
+    });
+    document.getElementById('audNote').textContent =
+      'The audience has spoken. As wisely as ever.';
+  }
+
+  const ch = document.getElementById('audChart');
+  ch.innerHTML = '';
+  ['A','B','C','D'].forEach((L,i) => {
+    const col = document.createElement('div');
+    col.className = 'aud-col';
+    col.innerHTML = `
+      <div class="aud-pct">${pcts[i]}%</div>
+      <div class="aud-bar" style="height:${pcts[i]}px;animation-delay:${i*.15}s"></div>
+      <div class="aud-ltr">${L}</div>`;
+    ch.appendChild(col);
+  });
+
+  document.getElementById('ovAud').classList.add('open');
+}
+
+function closeOv(id) { document.getElementById(id).classList.remove('open'); }
+
+/* ════════════════════════════════════════════
+   WIN SCREEN
+════════════════════════════════════════════ */
+function showWin() {
+  stopAmbient();
+  ['#qpanel','.t-row','.ll-row','#boxes','#cmt','#fab','#noBtn'
+  ].forEach(sel => {
+    const el = document.querySelector(sel);
+    if (el) el.style.display='none';
+  });
+
+  const fs = document.getElementById('final');
+  fs.style.display = 'flex';
+  fs.innerHTML = `
+    <div class="f-emo">💖</div>
+    <div class="f-ttl">SHE SAID YES!</div>
+    <div class="f-msg">
+      Helen, you have just answered correctly and won<br>
+      the most important prize in the history of this show.<br><br>
+      Not the money. Not the trophy.<br><br>
+      <strong>THE DATE OF A LIFETIME. 💖</strong>
+    </div>
+    <div class="f-prize">🏆 Tonight's Prize: The Date You'll Never Forget</div>
+    <button class="f-yes" id="cfBtn" onclick="confirmDate(this)">💌 CONFIRM MY DATE</button>
+  `;
+}
+
+async function confirmDate(btn) {
+  btn.textContent = '💌 Sending confirmation…';
+  btn.disabled = true;
+  await track('💌 DATE OFFICIALLY CONFIRMED', {message: 'Helen clicked YES and confirmed the date!'});
+  btn.textContent = '✅ Date Confirmed! See you soon 💖';
+  btn.style.background = 'linear-gradient(135deg,#15803d,#22c55e)';
+  btn.style.color = '#fff';
+}
+
+/* ════════════════════════════════════════════
+   CONFETTI
+════════════════════════════════════════════ */
+function spawnConfetti() {
+  const cols = ['#f5c518','#ff69b4','#ff1493','#22c55e','#60a5fa','#fff','#f97316'];
+  for (let i=0; i<80; i++) setTimeout(() => {
+    const p = document.createElement('div');
+    p.className = 'cp';
+    const s = 6+Math.random()*10;
+    p.style.cssText = `left:${Math.random()*100}vw;width:${s}px;height:${s*1.6}px;`+
+      `background:${cols[Math.floor(Math.random()*cols.length)]};`+
+      `animation-duration:${2.5+Math.random()*3}s;`+
+      `animation-delay:${Math.random()*.8}s;`+
+      `transform:rotate(${Math.random()*360}deg)`;
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(), 5500);
+  }, i*25);
+}
+
+/* ════════════════════════════════════════════
+   NO BUTTON — RUNS AWAY
+════════════════════════════════════════════ */
+function moveNo() {
+  const b = document.getElementById('noBtn');
+  const mxX = window.innerWidth-b.offsetWidth-20;
+  const mxY = window.innerHeight-b.offsetHeight-20;
+  b.style.left = Math.max(10, Math.floor(Math.random()*mxX))+'px';
+  b.style.top  = Math.max(10, Math.floor(Math.random()*mxY))+'px';
+}
+window.addEventListener('load', moveNo);
+window.addEventListener('resize', moveNo);
+const nb = document.getElementById('noBtn');
+nb.addEventListener('mouseover',   moveNo);
+nb.addEventListener('mouseenter',  moveNo);
+nb.addEventListener('touchstart', e=>{e.preventDefault();moveNo()});
+nb.addEventListener('click',      e=>{e.preventDefault();moveNo()});
+
+/* ════════════════════════════════════════════
+   START GAME (on splash click)
+════════════════════════════════════════════ */
+document.getElementById('splash').addEventListener('click', () => {
+  ac(); playIntro();
+  document.getElementById('splash').classList.add('gone');
+  setTimeout(() => {
+    document.getElementById('game').classList.add('on');
+    buildLadder();
+    renderQ();
+    setTimeout(startAmbient, 3600);
+  }, 650);
+  track('🎮 GAME STARTED — music playing');
+});
+</script>
+</body>
+</html>
